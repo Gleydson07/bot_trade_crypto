@@ -1,8 +1,8 @@
 const axios = require("axios");
 const crypto = require("crypto");
-const {SPOT_VARIABLES} = require('./TradeVariables');
+const {FUTURE_VARIABLES} = require('./TradeVariables');
 
-class Spot {
+class Future {
   constructor(){
     this.isOpened = false;
   };
@@ -11,33 +11,33 @@ class Spot {
     const obj = JSON.parse (event.data);
     const printMarket = {
       Symbol: obj.s,
-      Price: parseFloat(obj.a, 2),
+      Price: parseFloat(obj.a),
       Order: this.isOpened ?
-        `Comprar em: ${SPOT_VARIABLES[environment].priceBuyIn}` :
-        `Vender em: ${SPOT_VARIABLES[environment].priceSellIn}`
+        `Comprar em: ${FUTURE_VARIABLES[environment].priceBuyIn}` :
+        `Vender em: ${FUTURE_VARIABLES[environment].priceSellIn}`
     }
   
     console.log(printMarket);
 
-    if (printMarket.Price <= SPOT_VARIABLES[environment].priceBuyIn && !this.isOpened) {
+    if (printMarket.Price <= FUTURE_VARIABLES[environment].priceBuyIn && !this.isOpened) {
       this.newOrder(
-        SPOT_VARIABLES[environment].pair, 
-        SPOT_VARIABLES[environment].btcTradedAmount, 
+        FUTURE_VARIABLES[environment].pair, 
+        FUTURE_VARIABLES[environment].btcTradedAmount, 
         "BUY"
       );
 
-      console.log("SPOT - Comprou...");
+      console.log("FUTURE - Comprou...");
       this.isOpened = true;
     }
 
-    if (printMarket.Price >= SPOT_VARIABLES[environment].priceSellIn && this.isOpened) {
+    if (printMarket.Price >= FUTURE_VARIABLES[environment].priceSellIn && this.isOpened) {
       this.newOrder(
-        SPOT_VARIABLES[environment].pair, 
-        SPOT_VARIABLES[environment].btcTradedAmount, 
+        FUTURE_VARIABLES[environment].pair, 
+        FUTURE_VARIABLES[environment].btcTradedAmount, 
         "SELL"
       );
 
-      console.log("SPOT - Vendeu...");
+      console.log("FUTURE - Vendeu...");
       this.isOpened = false;
     }
   }
@@ -52,7 +52,7 @@ class Spot {
     };
   
     const signature = crypto
-      .createHmac('sha256', process.env.SECRET_KEY_SPOT)
+      .createHmac('sha256', process.env.SECRET_KEY_FUTURE)
       .update(new URLSearchParams(data).toString())
       .digest("hex");
   
@@ -61,8 +61,8 @@ class Spot {
     try {
       const result = await axios({
         method: "POST",
-        url: process.env.API_URL_SPOT + "/v3/order?" + new URLSearchParams(data),
-        headers: {"X-MBX-APIKEY": process.env.API_KEY_SPOT}
+        url: process.env.API_URL_FUTURE + "/v3/order?" + new URLSearchParams(data),
+        headers: {"X-MBX-APIKEY": process.env.API_KEY_FUTURE}
       });
   
       console.log({order: result.data});
@@ -73,4 +73,4 @@ class Spot {
 }
 
 
-module.exports = new Spot;
+module.exports = new Future;

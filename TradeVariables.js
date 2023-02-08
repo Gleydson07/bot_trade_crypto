@@ -1,4 +1,4 @@
-module.exports.SPOT_VARIABLES = {
+SPOT_VARIABLES = {
   production: {
     btcTradedAmount: "0.00017",
     pair: "BRLBTC",
@@ -12,3 +12,20 @@ module.exports.SPOT_VARIABLES = {
     priceSellIn: 23165 * 1.0000001
   }
 }
+
+FUTURE_VARIABLES = {
+  production: {
+    btcTradedAmount: "0.00017",
+    pair: "BRLBTC",
+    priceBuyIn: 120000,
+    priceSellIn: 120000 * 1.02
+  },
+  development: {
+    btcTradedAmount: "0.001",
+    pair: "BTCUSDT",
+    priceBuyIn: 23165,
+    priceSellIn: 23165 * 1.0000001
+  }
+}
+
+module.exports = {SPOT_VARIABLES, FUTURE_VARIABLES};
