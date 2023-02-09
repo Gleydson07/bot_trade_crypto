@@ -7,19 +7,8 @@ class Spot {
     this.isOpened = false;
   };
 
-  async market(event, environment) {
-    const obj = JSON.parse (event.data);
-    const printMarket = {
-      Symbol: obj.s,
-      Price: parseFloat(obj.a, 2),
-      Order: this.isOpened ?
-        `Comprar em: ${SPOT_VARIABLES[environment].priceBuyIn}` :
-        `Vender em: ${SPOT_VARIABLES[environment].priceSellIn}`
-    }
-  
-    console.log(printMarket);
-
-    if (printMarket.Price <= SPOT_VARIABLES[environment].priceBuyIn && !this.isOpened) {
+  async market(marketData, environment) {
+    if (marketData.Price <= SPOT_VARIABLES[environment].priceBuyIn && !this.isOpened) {
       this.newOrder(
         SPOT_VARIABLES[environment].pair, 
         SPOT_VARIABLES[environment].btcTradedAmount, 
@@ -30,7 +19,7 @@ class Spot {
       this.isOpened = true;
     }
 
-    if (printMarket.Price >= SPOT_VARIABLES[environment].priceSellIn && this.isOpened) {
+    if (marketData.Price >= SPOT_VARIABLES[environment].priceSellIn && this.isOpened) {
       this.newOrder(
         SPOT_VARIABLES[environment].pair, 
         SPOT_VARIABLES[environment].btcTradedAmount, 
